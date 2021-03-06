@@ -9,9 +9,9 @@ try:
     bs = input('squaresize:  ')
     offall = input('augmented construction(true or false):  ')
     if offall == 'true':
-        offall = False
-    else:
         offall = True
+    else:
+        offall = False
     bs = int(bs)
     plus = int(plus)
     size = size.split()
@@ -113,23 +113,27 @@ while run:
         if len(all) == 2:
             pygame.draw.line(window, blue, all[0], all[1], plus)
         elif len(all) == 1:
-            pygame.draw.circle(window, blue, [all[0][0], all[0][1]], plus * 2)
+            pygame.draw.circle(window, blue, [all[0][0], all[0][1]], plus * 2 + 1)
     for all in blocks:
         if all[-1] == 'dot':
             pygame.draw.circle(window, black, [all[0], all[1]], plus / 2)
         if all[-1] == 'sqr':
             pygame.draw.rect(window, all[2], [all[0], all[1], bs / 2, bs / 2])
         if all[-1] == 'anti':
-            anti = []
-            anti.append([3 + all[0], all[1]])
-            anti.append([3 + all[0] + 3, all[1]])
-            anti.append([3 + all[0] + 3, all[1] + plus * 2])
-            anti.append([3 + all[0] + 3 * 4, all[1] + plus * 3])
-            anti.append([3 + all[0] + 3.5 * 3, all[1] + plus * 3.4])
-            anti.append([3 + all[0] + 2, all[1] + plus * 2.5])
-            anti.append([3 + all[0] - 3 * 3, all[1] + plus * 3.4])
-            anti.append([3 + all[0] - 3 * 3.4, all[1] + plus * 3])
-            anti.append([3 + all[0], all[1] + plus * 2])
+            anti = [[all[0] + (bs / 20 * 9), all[1] + bs / 5]]
+            anti.append([all[0] + (bs / 20 * 11), all[1] + bs / 5])
+
+            anti.append([all[0] + (bs / 2 + 1), all[1] + bs / 2])
+
+            anti.append([all[0] + (bs / 4 * 3), all[1] + bs / 10 * 7])
+            anti.append([all[0] + (bs / 6 * 4), all[1] + bs / 10 * 7.5])
+
+            anti.append([all[0] + (bs / 2), all[1] + bs / 10 * 6])
+
+            anti.append([all[0] + (bs / 6 * 2), all[1] + bs / 10 * 7.5])
+            anti.append([all[0] + (bs / 4 * 1), all[1] + bs / 10 * 7])
+
+            anti.append([all[0] + (bs / 2 - 1), all[1] + bs / 2])
             pygame.draw.polygon(window, white, anti)
 
     for event in pygame.event.get():
@@ -186,12 +190,12 @@ while run:
 
             if event.key == pygame.K_e:
                 if (zy % 10 != 5 or zx % 10 != 5) or offall:
-                    if not [[x + 2, y + 2]] in starts:
-                        starts.append([[x + 2, y + 2]])
+                    if not [[x + (plus // 2 - 1), y + (plus // 2 - 1)]] in starts:
+                        starts.append([[x + (plus // 2 - 1), y + (plus // 2 - 1)]])
             elif event.key == pygame.K_r:
-                if [[x + 2, y + 2]] in starts:
-                    if not [[x + 2, y + 2]] in lines:
-                        lines.append([[x + 2, y + 2]])
+                if [[x + plus // 2 - 1, y + plus // 2 - 1]] in starts:
+                    if not [[x + (plus // 2 - 1), y + (plus // 2 - 1)]] in lines:
+                        lines.append([[x + (plus // 2 - 1), y + (plus // 2 - 1)]])
 
             if event.key == pygame.K_q:
                 if vis:
@@ -221,10 +225,10 @@ while run:
 
             elif event.key == pygame.K_v:
                 if (zy % 10 != 5 or zx % 10 != 5) or offall:
-                    d1 = [x + 2, y + 2]
+                    d1 = [x + plus // 2 - 1, y + plus // 2 - 1]
             elif event.key == pygame.K_b:
                 if (zy % 10 != 5 or zx % 10 != 5) or offall:
-                    d2 = [x + 2, y + 2]
+                    d2 = [x + plus // 2 - 1, y + plus // 2 - 1]
             elif event.key == pygame.K_n:
                 if d1 == d2:
                     pass
@@ -256,8 +260,8 @@ while run:
                 if not [sx + bs / 4 + 1, sy + bs / 4 + 1, 'sqr'] in blocks:
                     blocks.append([sx + bs / 4 + 1, sy + bs / 4 + 1, colors[colorchange], 'sqr'])
             elif event.key == pygame.K_3:
-                if not [sx + bs / 4 + 1, sy + bs / 4 + 1, 'anti'] in blocks:
-                    blocks.append([sx + bs / 2 - plus, sy + bs / 4 + 1, 'anti'])
+                if not [sx, sy, 'anti'] in blocks:
+                    blocks.append([sx, sy, 'anti'])
 
     if vis:
         pygame.draw.rect(window, red, (x, y, plus, plus))
