@@ -25,4 +25,3 @@ y,h - rotation: right, left
 backspace - exit game
 
 space - half mode
-
