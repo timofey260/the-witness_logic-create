@@ -106,11 +106,12 @@ def fill(scx, scy):
         dx = 0
 
 
-def sprite(x: int, y: int, sprite: list, window: pygame.display, bluec: bool, w, h):
+def sprite(x: int, y: int, sprite: list, window: pygame.display, bluec: bool, w: int, h: int):
     xp = 0
     yp = 0
-    ow = bs / w / 2
-    oh = bs / h / 2
+    ow = bs / w - plus
+    oh = bs / h - plus
+    m = min(ow, oh)
     ox = plus2
     oy = plus2
     for list in sprite:
@@ -119,14 +120,14 @@ def sprite(x: int, y: int, sprite: list, window: pygame.display, bluec: bool, w,
             by = yp * plus + oy - (plus2 / 2)
             if all != '0':
                 if bluec:
-                    pygame.draw.rect(window, blue, [bx + x, by + y, ow, oh], plus2)
+                    pygame.draw.rect(window, blue, [bx + x, by + y, m, m], plus2)
                 else:
-                    pygame.draw.rect(window, orange, [bx + x, by + y, ow, oh])
-            ox += ow
+                    pygame.draw.rect(window, orange, [bx + x, by + y, m, m])
+            ox += m
             xp += 1
         xp = 0
         yp += 1
-        oy += oh
+        oy += m
         ox = plus2
 
 
