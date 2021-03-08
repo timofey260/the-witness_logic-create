@@ -28,7 +28,7 @@ space - half mode
 
 # figures
 
-press a 6 or 7 bytton to make figures
+press a 6 or 7 button to make figures
 
 in console you see this:
 
