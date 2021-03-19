@@ -111,7 +111,7 @@ def sprite(x: int, y: int, sprite: list, window: pygame.display, bluec: bool, w:
     yp = 0
     ow = bs / w - plus
     oh = bs / h - plus
-    m = min(ow, oh)
+    m = min(ow, oh) - plus
     save = (bs - (m * w + plus2 * w)) / 4
     ox = plus2
     oy = plus2
@@ -350,6 +350,7 @@ while run:
                 if not [sx, sy, rotation, 'trid'] in blocks:
                     blocks.append([sx, sy, rotation, 'trid'])
             elif event.key == pygame.K_6 or event.key == pygame.K_7:
+                d = True
                 if event.key == pygame.K_7:
                     b = 'figb'
                 elif event.key == pygame.K_6:
@@ -359,17 +360,20 @@ while run:
                     sizeh = int(input('height(in blocks):  '))
                 except:
                     print('Error')
+                    d = False
                     break
                 ad = []
                 for f in range(sizeh):
                     d = input('%d: blocks(0 is clear, 1 is fill):  ' % (f + 1)).split()
                     if len(d) != sizew:
                         print('Error')
+                        d = False
                         break
                     else:
                         ad.append(d)
-                if not [sx, sy, ad, sizew, sizew, b] in blocks:
-                    blocks.append([sx, sy, ad, sizew, sizeh, b])
+                if d:
+                    if not [sx, sy, ad, sizew, sizew, b] in blocks:
+                        blocks.append([sx, sy, ad, sizew, sizeh, b])
             elif event.key == pygame.K_i:
                 if zy % 10 != 5 or zx % 10 != 5:
                     if not [x, y, 'cl'] in blocks:
