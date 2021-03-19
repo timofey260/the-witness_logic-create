@@ -1,10 +1,9 @@
 # the-witness_logic-create
 
-buttons:
-
+buttons:\n'
 z,x,c - undo: lines, starts, blocks & dots
 
-v,b,n,m,k - linemake: coordinate 1, coordinate 2, line between 2 coordinats, clear line between 2 coordinats, empty line between 2 coordinats
+v,b,n - linemake: coordinate 1, coordinate 2, line between 2 coordinats
 
 w,a,s,d - dot move: up, left, down, right
 
