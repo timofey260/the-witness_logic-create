@@ -26,7 +26,7 @@ except:
 system('cls||clear')
 print('buttons:\n'
       'z,x,c - undo: lines, starts, blocks & dots\n'
-      'v,b,n,m,k - linemake: coordinate 1, coordinate 2, line between 2 coordinats, clear line between 2 coordinats, empty line between 2 coordinats\n'
+      'v,b,n - linemake: coordinate 1, coordinate 2, line between 2 coordinats\n'
       'w,a,s,d - dot move: up, left, down, right\n'
       'up,left,down,right arrows - square move: up, left, down, right\n'
       '1,2,3,4,6,7 - create: dot, block, anti, triangle, double triangle, figure, anti-figure\n'
@@ -64,6 +64,7 @@ colors = [
     black,
     red,
     orange,
+    blue,
     [0, 255, 0],
     [0, 0, 255],
     [255, 255, 0],
@@ -77,7 +78,6 @@ iny = 0
 lines = []
 starts = []
 blocks = []
-steps = 0
 plus2 = plus // 2
 
 
@@ -112,12 +112,13 @@ def sprite(x: int, y: int, sprite: list, window: pygame.display, bluec: bool, w:
     ow = bs / w - plus
     oh = bs / h - plus
     m = min(ow, oh)
+    save = (bs - (m * w + plus2 * w)) / 4
     ox = plus2
     oy = plus2
     for list in sprite:
         for all in list:
-            bx = xp * plus + ox - (plus2 / 2)
-            by = yp * plus + oy - (plus2 / 2)
+            bx = xp * plus + ox - (plus2 / 2) + save
+            by = yp * plus + oy - (plus2 / 2) + save
             if all != '0':
                 if bluec:
                     pygame.draw.rect(window, blue, [bx + x, by + y, m, m], plus2)
@@ -143,28 +144,23 @@ while run:
     fill(mw, mh)
 
     for all in starts:
-        if len(all) == 2:
-            pygame.draw.line(window, white, all[0], all[1], plus)
-        elif len(all) == 1:
-            pygame.draw.circle(window, white, [all[0][0], all[0][1]], plus * 2)
+        pygame.draw.circle(window, white, [all[0][0], all[0][1]], plus * 2)
     for all in lines:
         if len(all) == 2:
-            pygame.draw.line(window, blue, all[0], all[1], plus)
+            pygame.draw.line(window, all[1], all[0][0], all[0][1], plus)
         elif len(all) == 1:
-            pygame.draw.circle(window, blue, [all[0][0], all[0][1]], plus * 2 + 1)
-        elif len(all) == 3:
-            pygame.draw.line(window, grey, all[0], all[1], plus)
+            pygame.draw.circle(window, all[0][2], [all[0][0], all[0][1]], plus * 2 + 1)
     for all in blocks:
         if all[-1] == 'dot':
-            pygame.draw.circle(window, black, [all[0] + plus2, all[1] + plus2], plus / 2)
+            pygame.draw.circle(window, all[2], [all[0] + plus2, all[1] + plus2], plus / 2)
         elif all[-1] == 'sqr':
             pygame.draw.rect(window, all[2], [all[0], all[1], bs / 2, bs / 2])
         elif all[-1] == 'anti':
             anti = [[all[0] + (bs / 20 * 9), all[1] + bs / 5], [all[0] + (bs / 20 * 11), all[1] + bs / 5],
-                    [all[0] + (bs / 2 + 1), all[1] + bs / 2], [all[0] + (bs / 4 * 3), all[1] + bs / 10 * 7],
+                    [all[0] + (bs / 20 * 11), all[1] + bs / 2], [all[0] + (bs / 4 * 3), all[1] + bs / 10 * 7],
                     [all[0] + (bs / 6 * 4), all[1] + bs / 10 * 7.5], [all[0] + (bs / 2), all[1] + bs / 10 * 6],
                     [all[0] + (bs / 6 * 2), all[1] + bs / 10 * 7.5], [all[0] + (bs / 4 * 1), all[1] + bs / 10 * 7],
-                    [all[0] + (bs / 2 - 1), all[1] + bs / 2]]
+                    [all[0] + (bs / 20 * 9), all[1] + bs / 2]]
 
             pygame.draw.polygon(window, white, anti)
         elif all[-1] == 'tri':
@@ -215,6 +211,9 @@ while run:
             sprite(all[0], all[1], all[2], window, False, all[3], all[4])
         elif all[-1] == 'figb':
             sprite(all[0], all[1], all[2], window, True, all[3], all[4])
+        elif all[-1] == 'cl':
+            pygame.draw.rect(window, grey, (all[0], all[1], plus, plus))
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -271,10 +270,11 @@ while run:
                 if (zy % 10 != 5 or zx % 10 != 5) or offall:
                     if not [[x + (plus2 - 1), y + (plus2 - 1)]] in starts:
                         starts.append([[x + (plus2 - 1), y + (plus2 - 1)]])
+
             elif event.key == pygame.K_r:
                 if [[x + plus2 - 1, y + plus2 - 1]] in starts:
-                    if not [[x + (plus2 - 1), y + (plus2 - 1)]] in lines:
-                        lines.append([[x + (plus2 - 1), y + (plus2 - 1)]])
+                    if not [[x + (plus2 - 1), y + (plus2 - 1), colors[colorchange]]] in lines:
+                        lines.append([[x + (plus2 - 1), y + (plus2 - 1), colors[colorchange]]])
 
             if event.key == pygame.K_q:
                 if vis:
@@ -312,21 +312,8 @@ while run:
                 if d1 == d2:
                     pass
                 elif (d1[0] == d2[0] or d1[1] == d2[1]) or offall:
-                    if not [d1, d2] in lines or not [d2, d1] in lines:
-                        lines.append([d1, d2])
-
-            elif event.key == pygame.K_m:
-                if d1 == d2:
-                    pass
-                elif (d1[0] == d2[0] or d1[1] == d2[1]) or offall:
-                    if not [d1, d2] in starts or not [d2, d1] in starts:
-                        starts.append([d1, d2])
-            elif event.key == pygame.K_k:
-                if d1 == d2:
-                    pass
-                elif (d1[0] == d2[0] or d1[1] == d2[1]) or offall:
-                    if not [d1, d2, 0] in lines or not [d2, d1, 0] in lines:
-                        lines.append([d1, d2, 0])
+                    if not [[d1, d2], colors[colorchange]] in lines or not [[d2, d1], colors[colorchange]] in lines:
+                        lines.append([[d1, d2], colors[colorchange]])
             if event.key == pygame.K_f:
                 lines = []
                 starts = []
@@ -347,9 +334,9 @@ while run:
                 if rotation == 4:
                     rotation = 0
             elif event.key == pygame.K_1:
-                if zy % 10 != 5 or zx % 10 != 5:
-                    if not [x, y, 'dot'] in blocks:
-                        blocks.append([x, y, 'dot'])
+                if zy % 10 != 5 or zx % 10 != 5 or offall:
+                    if not [x, y, colors[colorchange], 'dot'] in blocks:
+                        blocks.append([x, y, colors[colorchange], 'dot'])
             elif event.key == pygame.K_2:
                 if not [sx + bs / 4 + 1, sy + bs / 4 + 1, 'sqr'] in blocks:
                     blocks.append([sx + bs / 4 + 1, sy + bs / 4 + 1, colors[colorchange], 'sqr'])
@@ -362,7 +349,11 @@ while run:
             elif event.key == pygame.K_5:
                 if not [sx, sy, rotation, 'trid'] in blocks:
                     blocks.append([sx, sy, rotation, 'trid'])
-            elif event.key == pygame.K_6:
+            elif event.key == pygame.K_6 or event.key == pygame.K_7:
+                if event.key == pygame.K_7:
+                    b = 'figb'
+                elif event.key == pygame.K_6:
+                    b = 'fig'
                 try:
                     sizew = int(input('width(in blocks):  '))
                     sizeh = int(input('height(in blocks):  '))
@@ -371,43 +362,32 @@ while run:
                     break
                 ad = []
                 for f in range(sizeh):
-                    d = input('%d: blocks(0 is clear, 1 is fill):  '%(f)).split()
+                    d = input('%d: blocks(0 is clear, 1 is fill):  ' % (f + 1)).split()
                     if len(d) != sizew:
                         print('Error')
                         break
                     else:
                         ad.append(d)
-                if not [sx, sy, ad, sizew, sizew, 'fig'] in blocks:
-                    blocks.append([sx, sy, ad, sizew, sizeh, 'fig'])
-            elif event.key == pygame.K_7:
-                try:
-                    sizew = int(input('width(in blocks):  '))
-                    sizeh = int(input('height(in blocks):  '))
-                except:
-                    print('Error')
-                    break
-                ad = []
-                for f in range(sizeh):
-                    d = input('%d: blocks(0 is clear, 1 is fill):  '%(f)).split()
-                    if len(d) != sizew:
-                        print('Error')
-                        break
-                    else:
-                        ad.append(d)
-                if not [sx, sy, ad, sizew, sizew, 'figb'] in blocks:
-                    blocks.append([sx, sy, ad, sizew, sizeh, 'figb'])
+                if not [sx, sy, ad, sizew, sizew, b] in blocks:
+                    blocks.append([sx, sy, ad, sizew, sizeh, b])
+            elif event.key == pygame.K_i:
+                if zy % 10 != 5 or zx % 10 != 5:
+                    if not [x, y, 'cl'] in blocks:
+                        blocks.append([x, y, 'cl'])
+
     if vis:
-        pygame.draw.rect(window, red, (x, y, plus, plus))
+        pygame.draw.rect(window, colors[colorchange], (x, y, plus, plus))
         pygame.draw.rect(window, colors[colorchange], (sx, sy, bs, bs), plus)
         if rotation == 0:
-            pygame.draw.rect(window, colors[colorchange], (sx + (bs / 2) - plus2, sy + plus - plus2 - 2, plus, plus), plus)
+            pygame.draw.rect(window, colors[colorchange], (sx + (bs / 2) - plus2, sy + plus - plus2 - 2, plus, plus),
+                             plus)
         elif rotation == 1:
             pygame.draw.rect(window, colors[colorchange], (sx + bs - plus, sy + bs / 2 - plus2, plus, plus), plus)
         elif rotation == 2:
-            pygame.draw.rect(window, colors[colorchange], (sx + (bs / 2) - plus2, sy + bs - plus - plus2 + 2, plus, plus), plus)
+            pygame.draw.rect(window, colors[colorchange],
+                             (sx + (bs / 2) - plus2, sy + bs - plus - plus2 + 2, plus, plus), plus)
         elif rotation == 3:
             pygame.draw.rect(window, colors[colorchange], (sx + plus - plus, sy + bs / 2 - plus2, plus, plus), plus)
-
     pygame.display.flip()
     pygame.display.update()
 pygame.quit()
