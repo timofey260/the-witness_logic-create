@@ -34,7 +34,6 @@ print('buttons:\n'
       'q - viewing mode toggle\n'
       'e,r - starts: clear start, fill start\n'
       'f - clear all\n'
-      'y,h - rotation: right, left\n'
       'backspace - exit game\n'
       'space - half mode\n')
 
@@ -58,7 +57,6 @@ vis = True
 linemode = True
 d1, d2 = [0, 0], [0, 0]
 colorchange = 2
-rotation = 0
 colors = [
     white,
     black,
@@ -164,48 +162,16 @@ while run:
 
             pygame.draw.polygon(window, white, anti)
         elif all[-1] == 'tri':
-            if all[2] == 0:
-                tri = [[all[0] + (bs / 2), all[1] + bs / 5],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 8)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 8)]]
-            elif all[2] == 1:
-                tri = [[all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 5)],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 8)]]
-            elif all[2] == 2:
-                tri = [[all[0] + (bs / 2), all[1] + bs / 10 * 8],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 2)]]
-            elif all[2] == 3:
-                tri = [[all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 5)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 8)]]
+            tri = [[all[0] + (bs / 2), all[1] + bs / 5],
+                    [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 8)],
+                    [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 8)]]
             pygame.draw.polygon(window, orange, tri)
         elif all[-1] == 'trid':
-            if all[2] == 0:
-                tri = [[all[0] + (bs / 2), all[1] + (bs / 10 * 8)],
-                       [all[0] + (bs / 6 * 2), all[1] + (bs / 10 * 5)],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 8)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 8)],
-                       [all[0] + (bs / 6 * 4), all[1] + (bs / 10 * 5)]]
-            elif all[2] == 1:
-                tri = [[all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 10 * 5), all[1] + (bs / 6 * 2)],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 5)],
-                       [all[0] + (bs / 10 * 5), all[1] + (bs / 6 * 4)],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 8)]]
-            elif all[2] == 2:
-                tri = [[all[0] + (bs / 2), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 6 * 2), all[1] + (bs / 10 * 5)],
-                       [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 6 * 4), all[1] + (bs / 10 * 5)]]
-            elif all[2] == 3:
-                tri = [[all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 2)],
-                       [all[0] + (bs / 10 * 5), all[1] + (bs / 6 * 2)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 5)],
-                       [all[0] + (bs / 10 * 5), all[1] + (bs / 6 * 4)],
-                       [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 8)]]
+            tri = [[all[0] + (bs / 2), all[1] + (bs / 10 * 8)],
+                    [all[0] + (bs / 6 * 2), all[1] + (bs / 10 * 5)],
+                    [all[0] + (bs / 10 * 2), all[1] + (bs / 10 * 8)],
+                    [all[0] + (bs / 10 * 8), all[1] + (bs / 10 * 8)],
+                    [all[0] + (bs / 6 * 4), all[1] + (bs / 10 * 5)]]
             pygame.draw.polygon(window, orange, tri)
         elif all[-1] == 'fig':
             sprite(all[0], all[1], all[2], window, False, all[3], all[4])
@@ -324,15 +290,6 @@ while run:
             elif event.key == pygame.K_t:
                 if colorchange != len(colors) - 1:
                     colorchange += 1
-
-            elif event.key == pygame.K_y:
-                rotation -= 1
-                if rotation == -1:
-                    rotation = 3
-            elif event.key == pygame.K_h:
-                rotation += 1
-                if rotation == 4:
-                    rotation = 0
             elif event.key == pygame.K_1:
                 if zy % 10 != 5 or zx % 10 != 5 or offall:
                     if not [x, y, colors[colorchange], 'dot'] in blocks:
@@ -344,11 +301,11 @@ while run:
                 if not [sx, sy, 'anti'] in blocks:
                     blocks.append([sx, sy, 'anti'])
             elif event.key == pygame.K_4:
-                if not [sx, sy, rotation, 'tri'] in blocks:
-                    blocks.append([sx, sy, rotation, 'tri'])
+                if not [sx, sy,  'tri'] in blocks:
+                    blocks.append([sx, sy, 'tri'])
             elif event.key == pygame.K_5:
-                if not [sx, sy, rotation, 'trid'] in blocks:
-                    blocks.append([sx, sy, rotation, 'trid'])
+                if not [sx, sy, 'trid'] in blocks:
+                    blocks.append([sx, sy, 'trid'])
             elif event.key == pygame.K_6 or event.key == pygame.K_7:
                 d = True
                 if event.key == pygame.K_7:
@@ -382,16 +339,6 @@ while run:
     if vis:
         pygame.draw.rect(window, colors[colorchange], (x, y, plus, plus))
         pygame.draw.rect(window, colors[colorchange], (sx, sy, bs, bs), plus)
-        if rotation == 0:
-            pygame.draw.rect(window, colors[colorchange], (sx + (bs / 2) - plus2, sy + plus - plus2 - 2, plus, plus),
-                             plus)
-        elif rotation == 1:
-            pygame.draw.rect(window, colors[colorchange], (sx + bs - plus, sy + bs / 2 - plus2, plus, plus), plus)
-        elif rotation == 2:
-            pygame.draw.rect(window, colors[colorchange],
-                             (sx + (bs / 2) - plus2, sy + bs - plus - plus2 + 2, plus, plus), plus)
-        elif rotation == 3:
-            pygame.draw.rect(window, colors[colorchange], (sx + plus - plus, sy + bs / 2 - plus2, plus, plus), plus)
     pygame.display.flip()
     pygame.display.update()
 pygame.quit()
